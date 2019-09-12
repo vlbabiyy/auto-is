@@ -1,0 +1,24 @@
+- hosts: windows
+  gather_facts: yes
+  tasks:
+    - name: Search updates
+      win_updates:
+        state: searched
+        register: found_updates
+
+    - name: Rebooting host before updates
+      win_reboot:
+        reboot_timeout: 1200
+        when: (found_updates.reboot_required)
+
+    - name: Installing updates
+      win_updates:
+        state: installed
+        register: installed_updates
+        when: found_updates.found_update_count >=1
+
+    - name: Rebooting host after updates
+      win_reboot:
+        reboot_timeout: 1200
+        when: (installed_updates.reboot_required) or
+              (installed_updates.installed_update_count >=1)

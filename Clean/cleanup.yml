@@ -1,0 +1,7 @@
+- hosts: windows
+  tasks:
+    - name: Delete file with updates
+      win_file:
+        path: C:\ansible-devel\
+        state: absent
+      tags: cleanup_win
